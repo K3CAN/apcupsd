@@ -1,4 +1,4 @@
-#apcupsd scripts for Proxmox HA clusters
+# apcupsd scripts for Proxmox HA clusters
 
 The primary changes to the default scripts are the use of the [Pushover](https://pushover.net/api) API for notification instead of "mail" for notifications and the inclusion of a ha-manager "disable" call prior shutdown. 
 
@@ -8,5 +8,5 @@ The latter change is to prevent the "HA Shuffle". When an HA node receives a shu
 
 There is also an additional script, called "restart-ha-vms" which can be called when the system comes back online, either via systemd service or cron, to restore the VMs and re-enable HA. 
 
-##TODO: 
+## TODO: 
 Automatically gather IP info on the other nodes prevent hardcoding the node IPs. 
