@@ -15,5 +15,7 @@ ha-manager status | \
     awk '{print $2}' | \
     xargs -n 1 ha-manager set --state disabled
 
+ssh root@10.0.0.51 'shutdown -h now'  #replace and replicate for correct nodes
+
 ${SHUTDOWN} -h now "apcupsd UPS initiated shutdown"
 exit 0
