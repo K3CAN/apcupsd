@@ -1,0 +1,19 @@
+#!/bin/bash
+
+echo "UPS initiated Shutdown Sequence" | ${WALL}
+
+curl -s \
+  --form-string "token=$PUSHOVERTOKEN" \
+  --form-string "user=$PUSHOVERUSER" \
+  --form-string "message=PVE is initiating system shutdown" \
+  --form-string "priority=1" \
+  https://api.pushover.net/1/messages.json > /dev/null 2>&1
+
+# Disable all HA VMs with started status - credit: u/DerryDoberman
+ha-manager status | \
+    grep started | \
+    awk '{print $2}' | \
+    xargs -n 1 ha-manager set --state disabled
+
+${SHUTDOWN} -h now "apcupsd UPS initiated shutdown"
+exit 0

@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# This shell script if placed in /etc/apcupsd
+# will be called by /etc/apcupsd/apccontrol when apcupsd
+# loses contact with the UPS (i.e. the serial connection is not responding).
+# We send an email message to root to notify him.
+#
+
+# HOSTNAME=`hostname`
+# MSG="$HOSTNAME Communications with UPS $1 lost"
+# #
+# (
+#    echo "$MSG"
+# ) | $APCUPSD_MAIL -s "$MSG" $SYSADMIN
+
+curl -s \
+  --form-string "token=$PUSHOVERTOKEN" \
+  --form-string "user=$PUSHOVERUSER" \
+  --form-string "message=apcupsd: Communication lost" \
+  https://api.pushover.net/1/messages.json > /dev/null 2>&1
+
+exit 0

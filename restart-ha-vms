@@ -1,0 +1,11 @@
+#!/bin/sh
+
+VMS=$(ha-manager status | grep disabled | awk '{print $2}')
+
+if [ -z "$VMS" ] 
+then
+    echo "No disabled VMs"   
+else 
+    printf "$VMS" | xargs -n 1 ha-manager set --state started 
+    echo "Starting the following VMs:\n $VMS"
+fi 
