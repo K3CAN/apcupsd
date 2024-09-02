@@ -9,13 +9,17 @@ curl -s \
   --form-string "priority=1" \
   https://api.pushover.net/1/messages.json > /dev/null 2>&1
 
-# Disable all HA VMs with started status - credit: u/DerryDoberman
-ha-manager status | \
-    grep started | \
-    awk '{print $2}' | \
-    xargs -n 1 ha-manager set --state disabled
+VMS=$(ha-manager status | grep started | awk '{print $2}')
 
-ssh root@10.0.0.51 'shutdown -h now'  #replace and replicate for correct nodes
+if [ -z "$VMS" ] 
+then
+    echo "No started HA VMs"   
+else 
+    printf "$VMS" | xargs -n 1 ha-manager set --state disabled 
+    echo "Disabling the following VMs:\n $VMS"
+fi 
+
+ssh root@10.0.0.51 'shutdown -h now'  #replace and/or replicate for correct nodes
 
 ${SHUTDOWN} -h now "apcupsd UPS initiated shutdown"
 exit 0
