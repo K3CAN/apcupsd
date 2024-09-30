@@ -5,7 +5,7 @@ echo "UPS initiated Shutdown Sequence" | ${WALL}
 curl -s \
   --form-string "token=$PUSHOVERTOKEN" \
   --form-string "user=$PUSHOVERUSER" \
-  --form-string "message=PVE is initiating system shutdown" \
+  --form-string "message=apcupsd is initiating cluster shutdown" \
   --form-string "priority=1" \
   https://api.pushover.net/1/messages.json > /dev/null 2>&1
 
@@ -13,13 +13,16 @@ VMS=$(ha-manager status | grep started | awk '{print $2}')
 
 if [ -z "$VMS" ] 
 then
-    echo "No started HA VMs"   
+  echo "No started HA VMs"   
 else 
-    printf "$VMS" | xargs -n 1 ha-manager set --state disabled 
-    echo "Disabling the following VMs:\n $VMS"
+  printf "$VMS" | xargs -n 1 ha-manager set --state disabled 
+  echo "Disabling the following VMs:\n $VMS"
 fi 
 
-ssh root@10.0.0.51 'shutdown -h now'  #replace and/or replicate for correct nodes
+for ip in $(pvecm status | grep -Po '((?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4})$'); do
+  echo "Sending shutdown command to $ip"
+  ssh root@$ip 'shutdown -h now'
+done
 
 ${SHUTDOWN} -h now "apcupsd UPS initiated shutdown"
 exit 0
