@@ -2,6 +2,7 @@
 
 echo "UPS initiated Shutdown Sequence" | ${WALL}
 
+#Send message via Pushover. 
 curl -s \
   --form-string "token=$PUSHOVERTOKEN" \
   --form-string "user=$PUSHOVERUSER" \
@@ -9,6 +10,7 @@ curl -s \
   --form-string "priority=1" \
   https://api.pushover.net/1/messages.json > /dev/null 2>&1
 
+#Polls ha-manager for any HA VMs, then disables them.
 VMS=$(ha-manager status | grep started | awk '{print $2}')
 
 if [ -z "$VMS" ] 
@@ -19,10 +21,12 @@ else
   echo "Disabling the following VMs:\n $VMS"
 fi 
 
+#Polls pvecm for IP addresses of other nodes, then issues each a shutdown command.  
 for ip in $(pvecm status | grep -Po '((?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4})$'); do
   echo "Sending shutdown command to $ip"
   ssh root@$ip 'shutdown -h now'
 done
 
+#Finally, shutdown this device. 
 ${SHUTDOWN} -h now "apcupsd UPS initiated shutdown"
 exit 0
