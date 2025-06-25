@@ -24,7 +24,7 @@ fi
 #Polls pvecm for IP addresses of other nodes, then issues each a shutdown command.  
 for ip in $(pvecm status | grep -Po '((?:(?:25[0-5]|(?:2[0-4]|1\d|[1-9]|)\d)\.?\b){4})$'); do
   echo "Sending shutdown command to $ip"
-  ssh root@$ip 'shutdown -h now'
+  ssh root@$ip 'systemctl poweroff'
 done
 
 #Finally, shutdown this device. 

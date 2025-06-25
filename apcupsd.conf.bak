@@ -87,7 +87,7 @@ UPSCABLE usb
 #                            (helpful if you have more than one USB UPS).
 #
 UPSTYPE usb
-DEVICE /dev/ttyS0
+DEVICE
 
 # POLLTIME <int>
 #   Interval (in seconds) at which apcupsd polls the UPS for status. This
@@ -104,7 +104,7 @@ DEVICE /dev/ttyS0
 #   will be written. The directory must already exist; apcupsd will not create
 #   it. The actual name of the lock file is computed from DEVICE.
 #   Not used on Win32.
-LOCKFILE /var/lock
+LOCKFILE /var/lock/subsys
 
 # SCRIPTDIR <path to script directory>
 #   Directory in which apccontrol and event scripts are located.
@@ -120,7 +120,7 @@ PWRFAILDIR /etc/apcupsd
 # NOLOGINDIR <path to nologin directory>
 #   Directory in which to write the nologin file. The existence
 #   of this flag file tells the OS to disallow new logins.
-NOLOGINDIR /etc
+NOLOGINDIR /dev/null
 
 
 #
@@ -136,7 +136,7 @@ NOLOGINDIR /etc
 #   ONBATTERYDELAY time.  If you don't want to be annoyed by short
 #   powerfailures, make sure that apccontrol powerout does nothing
 #   i.e. comment out the wall.
-ONBATTERYDELAY 6
+ONBATTERYDELAY 5
 
 # 
 # Note: BATTERYLEVEL, MINUTES, and TIMEOUT work in conjunction, so
@@ -146,12 +146,12 @@ ONBATTERYDELAY 6
 # If during a power failure, the remaining battery percentage
 # (as reported by the UPS) is below or equal to BATTERYLEVEL, 
 # apcupsd will initiate a system shutdown.
-BATTERYLEVEL 5
+BATTERYLEVEL 10
 
 # If during a power failure, the remaining runtime in minutes 
 # (as calculated internally by the UPS) is below or equal to MINUTES,
 # apcupsd, will initiate a system shutdown.
-MINUTES 3
+MINUTES 10
 
 # If during a power failure, the UPS has run on batteries for TIMEOUT
 # many seconds or longer, apcupsd will initiate a system shutdown.
@@ -169,7 +169,7 @@ TIMEOUT 0
 
 #  Time in seconds between annoying users to signoff prior to
 #  system shutdown. 0 disables.
-ANNOY 300
+ANNOY 0
 
 # Initial delay after power failure before warning users to get
 # off the system.
@@ -206,7 +206,7 @@ NETSERVER on
 #  NIS will listen for connections only on that interface. Use the
 #  loopback address (127.0.0.1) to accept connections only from the
 #  local machine.
-NISIP 127.0.0.1
+NISIP 0.0.0.0
 
 # NISPORT <port> default is 3551 as registered with the IANA
 #  port to use for sending STATUS and EVENTS data over the network.
